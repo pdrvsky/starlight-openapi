@@ -19,7 +19,9 @@ type Props = InferGetStaticPropsType<typeof getStaticPaths>
 
 const { schema, type } = Astro.props
 
-schema.document = await OpenAPIParser.dereference(schema.document)
+schema.document = await (schema.config.openApiParserConfig
+  ? OpenAPIParser.dereference(schema.document, schema.config.openApiParserConfig)
+  : OpenAPIParser.dereference(schema.document))
 
 const isOverview = type === 'overview'
 

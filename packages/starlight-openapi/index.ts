@@ -3,9 +3,11 @@ import type { StarlightPlugin } from '@astrojs/starlight/types'
 import { validateConfig, type StarlightOpenAPIUserConfig } from './libs/config'
 import { starlightOpenAPIIntegration } from './libs/integration'
 import { parseSchema } from './libs/parser'
-import { getSidebarFromSchemas, getSidebarGroupsPlaceholder } from './libs/starlight'
+import { getSidebarFromSchemas, getSidebarGroupsPlaceholder, getSchemaSidebarGroupPlaceholder } from './libs/starlight'
 
 export const openAPISidebarGroups = getSidebarGroupsPlaceholder()
+
+export { getSchemaSidebarGroupPlaceholder }
 
 export default function starlightOpenAPIPlugin(userConfig: StarlightOpenAPIUserConfig): StarlightPlugin {
   return {

@@ -12,6 +12,14 @@ import { capitalize } from './utils'
 
 const starlightOpenAPISidebarGroupsLabel = Symbol('StarlightOpenAPISidebarGroupsLabel')
 
+export function getSchemaSidebarGroupPlaceholder(base: string): SidebarGroup {
+  return {
+    collapsed: false,
+    items: [],
+    label: `${starlightOpenAPISidebarGroupsLabel.toString()}/${base}`,
+  }
+}
+
 export function getSidebarGroupsPlaceholder(): SidebarGroup[] {
   return [
     {
@@ -46,6 +54,13 @@ export function getSidebarFromSchemas(
   function replaceSidebarGroupsPlaceholder(group: SidebarManualGroup): SidebarManualGroup | SidebarManualGroup[] {
     if (group.label === starlightOpenAPISidebarGroupsLabel.toString()) {
       return sidebarGroups
+    }
+
+    if (group.label.startsWith(starlightOpenAPISidebarGroupsLabel.toString())) {
+      const schemaPath = group.label.split(/\/(.*)/s).at(1)
+      const schema = schemas.find((schema) => schema.config.schema === schemaPath)
+
+      if (schema) return getSchemaSidebarGroups(schema)
     }
 
     if (isSidebarManualGroup(group)) {
@@ -162,9 +177,16 @@ export interface SidebarManualGroup {
   label: string
 }
 
-interface SidebarLink {
+export interface SidebarLink {
   label: string
   link: string
+  badge?:
+    | string
+    | {
+        text: string
+        variant?: 'note' | 'danger' | 'success' | 'caution' | 'tip' | 'default'
+        class?: string
+      }
 }
 
 interface StarlightPageProps {

@@ -1,9 +1,11 @@
-import { z } from 'astro/zod'
+import type OpenAPIParser from '@readme/openapi-parser'
+import { z, type ZodType, type ZodOptional } from 'astro/zod'
 import type { OpenAPI } from 'openapi-types'
 
+import type { PathItemOperation } from './operation'
 import { getBaseLink, stripLeadingAndTrailingSlashes } from './path'
 import { getPathItemSidebarGroups, getWebhooksSidebarGroups } from './pathItem'
-import { makeSidebarGroup, makeSidebarLink, type SidebarManualGroup } from './starlight'
+import { makeSidebarGroup, makeSidebarLink, type SidebarLink, type SidebarManualGroup } from './starlight'
 
 export const SchemaConfigSchema = z.object({
   /**
@@ -12,7 +14,7 @@ export const SchemaConfigSchema = z.object({
    */
   base: z.string().min(1).transform(stripLeadingAndTrailingSlashes),
   /**
-   * Wheter the generated documentation sidebar group should be collapsed by default.
+   * Whether the generated documentation sidebar group should be collapsed by default.
    * @default true
    */
   collapsed: z.boolean().default(true),
@@ -24,6 +26,18 @@ export const SchemaConfigSchema = z.object({
    * The OpenAPI/Swagger schema path or URL.
    */
   schema: z.string().min(1),
+  /**
+   * The OpenAPIParser configuration.
+   */
+  openApiParserConfig: z.any().optional() as ZodOptional<ZodType<OpenAPIParser.Options>>,
+  /**
+   * The operation title getter
+   */
+  getOperationTitle: z
+    .function()
+    .args(z.any() as ZodType<PathItemOperation>)
+    .returns(z.any() as ZodType<SidebarLink>)
+    .optional(),
 })
 
 export function getSchemaSidebarGroups(schema: Schema): SidebarManualGroup {

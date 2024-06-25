@@ -10,7 +10,14 @@ export function getPathItemSidebarGroups({ config, document }: Schema): SidebarM
   return [...operations.entries()].map(([tag, operations]) =>
     makeSidebarGroup(
       tag,
-      operations.map(({ slug, title }) => makeSidebarLink(title, baseLink + slug)),
+      operations.map((operation) => {
+        const { slug, title } = operation
+        const customItem = config.getOperationTitle?.(operation) ?? {}
+        return {
+          ...makeSidebarLink(title, baseLink + slug),
+          ...customItem,
+        }
+      }),
       config.collapsed,
     ),
   )
